@@ -1,0 +1,58 @@
+---
+title: "My Solution"
+author: "Justin Sparto"
+date: "2022-12-03"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+##  Initialize DF
+```{r}
+df <- data.frame(id = integer(), calories = integer())
+
+df
+```
+
+## Read in the data
+```{r}
+lines <- readLines(file('./data/input.txt'), skipNul = FALSE)
+
+elfNum = 1
+
+for (line in lines){
+  if (line == ""){
+    elfNum = elfNum + 1
+  }
+  else{
+    df[nrow(df) + 1,] = c(elfNum, line)
+  }
+}
+
+elfNum = 0
+
+df$id <- as.integer(df$id)
+df$calories <- as.integer(df$calories)
+
+df
+```
+## Aggregate the data
+```{r}
+df = df %>% 
+    group_by(id) %>% 
+    summarise(calories = sum(calories))
+
+df
+```
+
+## Print the max
+```{r}
+df[which.max(df$calories),]
+```
+
