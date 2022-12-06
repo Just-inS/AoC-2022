@@ -11,7 +11,7 @@
 
 <meta name="author" content="Justin Sparto" />
 
-<meta name="date" content="2022-12-03" />
+<meta name="date" content="2022-12-06" />
 
 <title>My Solution</title>
 
@@ -352,144 +352,127 @@ display: none;
 
 <h1 class="title toc-ignore">My Solution</h1>
 <h4 class="author">Justin Sparto</h4>
-<h4 class="date">2022-12-03</h4>
+<h4 class="date">2022-12-06</h4>
 
 </div>
 
 
 <div id="part-1" class="section level1">
 <h1>Part 1</h1>
-<div id="identify-the-elf-carrying-the-most-calories" class="section level2">
-<h2>Identify the Elf Carrying the most Calories</h2>
+<div id="find-total-score-based-on-strategy-guide-input-data" class="section level2">
+<h2>Find Total Score based on strategy guide (input data)</h2>
 <div id="initialize-df" class="section level3">
 <h3>Initialize DF</h3>
-<pre><code>## [1] id       calories
-## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
-</div>
-<div id="read-in-the-data" class="section level3">
-<h3>Read in the data</h3>
-<pre class="r"><code>lines &lt;- readLines(file(&#39;./data/input.txt&#39;), skipNul = FALSE)</code></pre>
-<pre><code>## Warning in readLines(file(&quot;./data/input.txt&quot;), skipNul = FALSE): incomplete
-## final line found on &#39;./data/input.txt&#39;</code></pre>
-<pre class="r"><code>elfNum = 1
+<pre class="r"><code>df = read.table(&#39;./data/input.txt&#39;,sep=&#39;&#39;)
 
-for (line in lines){
-  if (line == &quot;&quot;){
-    elfNum = elfNum + 1
+# Rename Cols
+df &lt;- df %&gt;% 
+  rename(&#39;them&#39; = &#39;V1&#39;,
+         &#39;me&#39; = &#39;V2&#39;)
+
+# Add score col
+df$my_score = 0</code></pre>
+</div>
+<div id="loop-through-df-adding-my_score" class="section level3">
+<h3>Loop through df adding my_score</h3>
+<pre class="r"><code>for(i in 1:nrow(df)) {
+  
+  if (df$them[i] == &#39;A&#39; &amp;&amp; df$me[i] == &#39;X&#39;){
+    df$my_score[i] &lt;- 4
+  }
+  else if (df$them[i] == &#39;B&#39; &amp;&amp; df$me[i] == &#39;Y&#39;){
+    df$my_score[i] &lt;- 5
+  }
+  else if (df$them[i] == &#39;C&#39; &amp;&amp; df$me[i] == &#39;Z&#39;){
+    df$my_score[i] &lt;- 6
+  }
+  else if (df$them[i] == &#39;A&#39; &amp;&amp; df$me[i] == &#39;Y&#39;){
+    df$my_score[i] &lt;- 8
+  }
+  else if (df$them[i] == &#39;A&#39; &amp;&amp; df$me[i] == &#39;Z&#39;){
+    df$my_score[i] &lt;- 3
+  }
+  else if (df$them[i] == &#39;B&#39; &amp;&amp; df$me[i] == &#39;X&#39;){
+    df$my_score[i] &lt;- 1
+  }
+  else if (df$them[i] == &#39;B&#39; &amp;&amp; df$me[i] == &#39;Z&#39;){
+    df$my_score[i] &lt;- 9
+  }
+  else if (df$them[i] == &#39;C&#39; &amp;&amp; df$me[i] == &#39;X&#39;){
+    df$my_score[i] &lt;- 7
+  }
+  else if (df$them[i] == &#39;C&#39; &amp;&amp; df$me[i] == &#39;Y&#39;){
+    df$my_score[i] &lt;- 2
   }
   else{
-    df[nrow(df) + 1,] = c(elfNum, line)
+    print(&quot;Someone&#39;s a cheater&quot;)
   }
-}
-
-elfNum = 0
-
-df$id &lt;- as.integer(df$id)
-df$calories &lt;- as.integer(df$calories)
-
-head(df)</code></pre>
-<pre><code>##   id calories
-## 1  1    15931
-## 2  1     8782
-## 3  1    16940
-## 4  1    14614
-## 5  2     4829
-## 6  2    12415</code></pre>
+}</code></pre>
 </div>
-<div id="aggregate-the-data" class="section level3">
-<h3>Aggregate the data</h3>
-<pre class="r"><code>df = df %&gt;% 
-    group_by(id) %&gt;% 
-    summarise(calories = sum(calories))
-
-head(df)</code></pre>
-<pre><code>## # A tibble: 6 × 2
-##      id calories
-##   &lt;int&gt;    &lt;int&gt;
-## 1     1    56267
-## 2     2    50143
-## 3     3    47308
-## 4     4    64230
-## 5     5    47238
-## 6     6    51084</code></pre>
-</div>
-<div id="print-the-max" class="section level3">
-<h3>Print the max</h3>
-<pre class="r"><code>topElves &lt;- df[which.max(df$calories),]
-topElves</code></pre>
-<pre><code>## # A tibble: 1 × 2
-##      id calories
-##   &lt;int&gt;    &lt;int&gt;
-## 1    22    70116</code></pre>
+<div id="output-total-score" class="section level3">
+<h3>Output total score</h3>
+<pre class="r"><code>df %&gt;% 
+    summarise(TotalScore = sum(my_score))</code></pre>
+<pre><code>##   TotalScore
+## 1      13565</code></pre>
 </div>
 </div>
 </div>
 <div id="part-1-complete" class="section level1">
 <h1>Part 1 Complete</h1>
-<div id="answer-elf-4-carrying-70116-calories" class="section level2">
-<h2>Answer: Elf 4 carrying 70,116 calories</h2>
+<div id="answer-my-score-would-be-13565-if-everything-goes-exactly-according-to-the-strategy-guide" class="section level2">
+<h2>Answer: My Score would be 13,565 if everything goes exactly
+according to the strategy guide!</h2>
 </div>
 </div>
 <div id="part-2" class="section level1">
 <h1>Part 2</h1>
-<div id="identify-the-top-three-elves-and-print-their-combined-calories" class="section level2">
-<h2>Identify the top three Elves and print their combined calories</h2>
-<pre class="r"><code>topElves &lt;- NULL
-numTopElves = 3
-
-while (numTopElves &gt; 0){
+<div id="the-guides-meaning-has-changed-slightly" class="section level2">
+<h2>The guides meaning has changed slightly</h2>
+<pre class="r"><code>for(i in 1:nrow(df)) {
   
-  if (is.null(topElves)){
-    # Find top elf and add to new df
-    topElves &lt;- df[which.max(df$calories),]
-  
-    # Isolating id of top elf
-    tElf &lt;- topElves[nrow(topElves),]
-    tElf &lt;- as.double(tElf[,1])
-  
-    #Removing Top elf from circulation
-    df &lt;- df %&gt;%
-      filter(!(df[&#39;id&#39;]) == tElf)
-    
-    # Deprecate exit var
-    numTopElves = numTopElves - 1
+  if (df$them[i] == &#39;A&#39; &amp;&amp; df$me[i] == &#39;X&#39;){
+    df$my_score[i] &lt;- 3
   }
-  else {
-    # Add subsequent highest elf
-    topElves[nrow(topElves) + 1,] = df[which.max(df$calories),]
-    
-    # Isolating id of subsequent elf
-    tElf &lt;- topElves[nrow(topElves),]
-    tElf &lt;- as.double(tElf[,1])
-    
-    # Removing from circulation
-    df &lt;- df %&gt;%
-    filter(!(df[&#39;id&#39;]) == tElf)
-    
-    # Deprecate exit var
-    numTopElves = numTopElves - 1
+  else if (df$them[i] == &#39;B&#39; &amp;&amp; df$me[i] == &#39;Y&#39;){
+    df$my_score[i] &lt;- 5
   }
-}
-
-print(topElves)</code></pre>
-<pre><code>## # A tibble: 3 × 2
-##      id calories
-##   &lt;int&gt;    &lt;int&gt;
-## 1    22    70116
-## 2   235    68706
-## 3   131    67760</code></pre>
-<pre class="r"><code>topElves %&gt;%
-  summarise(sum(calories))</code></pre>
-<pre><code>## # A tibble: 1 × 1
-##   `sum(calories)`
-##             &lt;int&gt;
-## 1          206582</code></pre>
+  else if (df$them[i] == &#39;C&#39; &amp;&amp; df$me[i] == &#39;Z&#39;){
+    df$my_score[i] &lt;- 7
+  }
+  else if (df$them[i] == &#39;A&#39; &amp;&amp; df$me[i] == &#39;Y&#39;){
+    df$my_score[i] &lt;- 4
+  }
+  else if (df$them[i] == &#39;A&#39; &amp;&amp; df$me[i] == &#39;Z&#39;){
+    df$my_score[i] &lt;- 8
+  }
+  else if (df$them[i] == &#39;B&#39; &amp;&amp; df$me[i] == &#39;X&#39;){
+    df$my_score[i] &lt;- 1
+  }
+  else if (df$them[i] == &#39;B&#39; &amp;&amp; df$me[i] == &#39;Z&#39;){
+    df$my_score[i] &lt;- 9
+  }
+  else if (df$them[i] == &#39;C&#39; &amp;&amp; df$me[i] == &#39;X&#39;){
+    df$my_score[i] &lt;- 2
+  }
+  else if (df$them[i] == &#39;C&#39; &amp;&amp; df$me[i] == &#39;Y&#39;){
+    df$my_score[i] &lt;- 6
+  }
+  else{
+    print(&quot;Someone&#39;s a cheater&quot;)
+  }
+}</code></pre>
+<pre class="r"><code>df %&gt;% 
+    summarise(TotalScore = sum(my_score))</code></pre>
+<pre><code>##   TotalScore
+## 1      12424</code></pre>
 </div>
 </div>
 <div id="part-2-complete" class="section level1">
 <h1>Part 2 Complete</h1>
-<div id="answer-the-top-3-elves-were-carrying-206582-combined-calories" class="section level2">
-<h2>Answer: The top 3 elves were carrying 206582 combined calories</h2>
+<div id="answer-my-score-would-be-12424-if-everything-goes-exactly-according-to-the-strategy-guide" class="section level2">
+<h2>Answer: My Score would be 12,424 if everything goes exactly
+according to the strategy guide!</h2>
 </div>
 </div>
 

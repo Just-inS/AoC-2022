@@ -63,7 +63,7 @@ topElves
 ## Answer: Elf 4 carrying 70,116 calories
 
 # Part 2
-# Identify the top three Elves and print their combined calories
+## Identify the top three Elves and print their combined calories
 
 ```{r}
 
