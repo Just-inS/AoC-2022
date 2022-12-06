@@ -357,16 +357,17 @@ display: none;
 </div>
 
 
-<div id="initialize-df" class="section level2">
-<h2>Initialize DF</h2>
-<pre class="r"><code>df &lt;- data.frame(id = integer(), calories = integer())
-
-df</code></pre>
+<div id="part-1" class="section level1">
+<h1>Part 1</h1>
+<div id="identify-the-elf-carrying-the-most-calories" class="section level2">
+<h2>Identify the Elf Carrying the most Calories</h2>
+<div id="initialize-df" class="section level3">
+<h3>Initialize DF</h3>
 <pre><code>## [1] id       calories
 ## &lt;0 rows&gt; (or 0-length row.names)</code></pre>
 </div>
-<div id="read-in-the-data" class="section level2">
-<h2>Read in the data</h2>
+<div id="read-in-the-data" class="section level3">
+<h3>Read in the data</h3>
 <pre class="r"><code>lines &lt;- readLines(file(&#39;./data/input.txt&#39;), skipNul = FALSE)</code></pre>
 <pre><code>## Warning in readLines(file(&quot;./data/input.txt&quot;), skipNul = FALSE): incomplete
 ## final line found on &#39;./data/input.txt&#39;</code></pre>
@@ -386,42 +387,110 @@ elfNum = 0
 df$id &lt;- as.integer(df$id)
 df$calories &lt;- as.integer(df$calories)
 
-df</code></pre>
-<pre><code>##    id calories
-## 1   1     1000
-## 2   1     2000
-## 3   1     3000
-## 4   2     4000
-## 5   3     5000
-## 6   3     6000
-## 7   4     7000
-## 8   4     8000
-## 9   4     9000
-## 10  5    10000</code></pre>
+head(df)</code></pre>
+<pre><code>##   id calories
+## 1  1    15931
+## 2  1     8782
+## 3  1    16940
+## 4  1    14614
+## 5  2     4829
+## 6  2    12415</code></pre>
 </div>
-<div id="aggregate-the-data" class="section level2">
-<h2>Aggregate the data</h2>
+<div id="aggregate-the-data" class="section level3">
+<h3>Aggregate the data</h3>
 <pre class="r"><code>df = df %&gt;% 
     group_by(id) %&gt;% 
     summarise(calories = sum(calories))
 
-df</code></pre>
-<pre><code>## # A tibble: 5 × 2
+head(df)</code></pre>
+<pre><code>## # A tibble: 6 × 2
 ##      id calories
 ##   &lt;int&gt;    &lt;int&gt;
-## 1     1     6000
-## 2     2     4000
-## 3     3    11000
-## 4     4    24000
-## 5     5    10000</code></pre>
+## 1     1    56267
+## 2     2    50143
+## 3     3    47308
+## 4     4    64230
+## 5     5    47238
+## 6     6    51084</code></pre>
 </div>
-<div id="print-the-max" class="section level2">
-<h2>Print the max</h2>
-<pre class="r"><code>df[which.max(df$calories),]</code></pre>
+<div id="print-the-max" class="section level3">
+<h3>Print the max</h3>
+<pre class="r"><code>topElves &lt;- df[which.max(df$calories),]
+topElves</code></pre>
 <pre><code>## # A tibble: 1 × 2
 ##      id calories
 ##   &lt;int&gt;    &lt;int&gt;
-## 1     4    24000</code></pre>
+## 1    22    70116</code></pre>
+</div>
+</div>
+</div>
+<div id="part-1-complete" class="section level1">
+<h1>Part 1 Complete</h1>
+<div id="answer-elf-4-carrying-70116-calories" class="section level2">
+<h2>Answer: Elf 4 carrying 70,116 calories</h2>
+</div>
+</div>
+<div id="part-2" class="section level1">
+<h1>Part 2</h1>
+</div>
+<div id="identify-the-top-three-elves-and-print-their-combined-calories" class="section level1">
+<h1>Identify the top three Elves and print their combined calories</h1>
+<pre class="r"><code>topElves &lt;- NULL
+numTopElves = 3
+
+while (numTopElves &gt; 0){
+  
+  if (is.null(topElves)){
+    # Find top elf and add to new df
+    topElves &lt;- df[which.max(df$calories),]
+  
+    # Isolating id of top elf
+    tElf &lt;- topElves[nrow(topElves),]
+    tElf &lt;- as.double(tElf[,1])
+  
+    #Removing Top elf from circulation
+    df &lt;- df %&gt;%
+      filter(!(df[&#39;id&#39;]) == tElf)
+    
+    # Deprecate exit var
+    numTopElves = numTopElves - 1
+  }
+  else {
+    # Add subsequent highest elf
+    topElves[nrow(topElves) + 1,] = df[which.max(df$calories),]
+    
+    # Isolating id of subsequent elf
+    tElf &lt;- topElves[nrow(topElves),]
+    tElf &lt;- as.double(tElf[,1])
+    
+    # Removing from circulation
+    df &lt;- df %&gt;%
+    filter(!(df[&#39;id&#39;]) == tElf)
+    
+    # Deprecate exit var
+    numTopElves = numTopElves - 1
+  }
+}
+
+print(topElves)</code></pre>
+<pre><code>## # A tibble: 3 × 2
+##      id calories
+##   &lt;int&gt;    &lt;int&gt;
+## 1    22    70116
+## 2   235    68706
+## 3   131    67760</code></pre>
+<pre class="r"><code>topElves %&gt;%
+  summarise(sum(calories))</code></pre>
+<pre><code>## # A tibble: 1 × 1
+##   `sum(calories)`
+##             &lt;int&gt;
+## 1          206582</code></pre>
+</div>
+<div id="part-2-complete" class="section level1">
+<h1>Part 2 Complete</h1>
+<div id="answer-the-top-3-elves-were-carrying-206582-combined-calories" class="section level2">
+<h2>Answer: The top 3 elves were carrying 206582 combined calories</h2>
+</div>
 </div>
 
 

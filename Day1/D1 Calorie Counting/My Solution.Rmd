@@ -13,14 +13,17 @@ knitr::opts_chunk$set(echo = TRUE)
 library(tidyverse)
 ```
 
-##  Initialize DF
-```{r}
+# Part 1
+## Identify the Elf Carrying the most Calories
+
+###  Initialize DF
+```{r, echo=FALSE}
 df <- data.frame(id = integer(), calories = integer())
 
 df
 ```
 
-## Read in the data
+### Read in the data
 ```{r}
 lines <- readLines(file('./data/input.txt'), skipNul = FALSE)
 
@@ -40,19 +43,114 @@ elfNum = 0
 df$id <- as.integer(df$id)
 df$calories <- as.integer(df$calories)
 
-df
+head(df)
 ```
-## Aggregate the data
+### Aggregate the data
 ```{r}
 df = df %>% 
     group_by(id) %>% 
     summarise(calories = sum(calories))
 
-df
+head(df)
 ```
 
-## Print the max
+### Print the max
 ```{r}
-df[which.max(df$calories),]
+topElves <- df[which.max(df$calories),]
+topElves
 ```
+# Part 1 Complete
+## Answer: Elf 4 carrying 70,116 calories
+
+# Part 2
+# Identify the top three Elves and print their combined calories
+
+```{r}
+
+topElves <- NULL
+numTopElves = 3
+
+while (numTopElves > 0){
+  
+  if (is.null(topElves)){
+    # Find top elf and add to new df
+    topElves <- df[which.max(df$calories),]
+  
+    # Isolating id of top elf
+    tElf <- topElves[nrow(topElves),]
+    tElf <- as.double(tElf[,1])
+  
+    #Removing Top elf from circulation
+    df <- df %>%
+      filter(!(df['id']) == tElf)
+    
+    # Deprecate exit var
+    numTopElves = numTopElves - 1
+  }
+  else {
+    # Add subsequent highest elf
+    topElves[nrow(topElves) + 1,] = df[which.max(df$calories),]
+    
+    # Isolating id of subsequent elf
+    tElf <- topElves[nrow(topElves),]
+    tElf <- as.double(tElf[,1])
+    
+    # Removing from circulation
+    df <- df %>%
+    filter(!(df['id']) == tElf)
+    
+    # Deprecate exit var
+    numTopElves = numTopElves - 1
+  }
+}
+
+print(topElves)
+```
+
+
+```{r}
+topElves %>%
+  summarise(sum(calories))
+```
+# Part 2 Complete
+## Answer: The top 3 elves were carrying 206582 combined calories
+
+
+```{r, echo=FALSE}
+
+#Excess code used pre while loop
+
+# # Find top elf and add to new df
+# topElves <- df[which.max(df$calories),]
+# print(topElves)
+# 
+# # Isolating id of top elf
+# tElf <- topElves[nrow(topElves),]
+# tElf <- as.double(tElf[,1])
+# print(tElf)
+# 
+# #Removing Top elf from circulation
+# df <- df %>%
+#   filter(!(df['id']) == tElf)
+# 
+# # Add second highest elf
+# topElves[nrow(topElves) + 1,] = df[which.max(df$calories),]
+# print(topElves)
+# 
+# # Remove from circulation
+# tElf <- topElves[nrow(topElves),]
+# tElf <- as.double(tElf[,1])
+# print(tElf)
+# 
+# df <- df %>%
+#   filter(!(df['id']) == tElf)
+# 
+# # Add third highest elf
+# topElves[nrow(topElves) + 1,] = df[which.max(df$calories),]
+
+```
+
+
+
+
 
