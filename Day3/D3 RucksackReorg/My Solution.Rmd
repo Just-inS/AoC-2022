@@ -1,0 +1,154 @@
+---
+title: "My Solution"
+author: "Justin Sparto"
+date: "2022-12-07"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+
+# Part 1
+## Find the item type that appears in both compartments of each rucksack. What is the sum of the priorities of those item types?
+
+###  Initialize DF
+```{r}
+df = read.table('./data/input.txt')
+
+df2 <- df
+
+```
+
+```{r}
+lowerLetters <- letters[1:26]
+
+upperLetters <- LETTERS[1:26]
+
+myLetters <- append(lowerLetters, upperLetters)
+
+# match("A", myLetters) - # Outputs 27
+
+```
+
+
+
+### Loop through DF
+```{r}
+
+for (i in 1:nrow(df)){
+  
+  string <- df$V1[i]
+  
+  # Determine Length of string
+  length <- nchar(string)
+  
+  # Parse string
+  firstHalf <- substr(string, 1, length/2)
+  
+  secondHalf <- substr(string, length/2+1, length)
+  
+  # Add to DF
+  df$V2[i] <- firstHalf
+  df$V3[i] <- secondHalf
+  
+}
+
+```
+
+
+
+```{r}
+# Finds common value and adds priority score to new col based
+for (i in 1:nrow(df)){
+  
+  firstHalf <- unlist(strsplit(df$V2[i],""))
+  secondHalf <- unlist(strsplit(df$V3[i],""))
+  
+  commonChar <- intersect(firstHalf, secondHalf)
+  
+  df$score[i] <- match(commonChar, myLetters)
+}
+```
+
+
+```{r}
+df %>%
+  summarise(total = sum(score))
+
+```
+
+# Part 1 Complete
+## After finding the item type that appears in both compartments of each rucksack, assigning a priority score and summing them... we get an answer of 7824.
+
+# Part 2
+## Find the item type that corresponds to the badges of each three-Elf group. What is the sum of the priorities of those item types?
+
+```{r}
+
+df3 <- data.frame(V1 = NA, V2 = NA, V3 = NA)
+
+i <- 1
+
+while (i <= nrow(df2)){
+    
+  string1 <- df2$V1[i]
+  string2 <- df2$V1[i+1]
+  string3 <- df2$V1[i+2]
+    
+  df3[nrow(df3)+1, 1] <- string1
+  df3[nrow(df3), 2] <- string2
+  df3[nrow(df3), 3] <- string3
+ 
+  i <- i+3
+}
+
+df3 <- df3[-1,]
+```
+
+
+```{r}
+for (i in 1:nrow(df3)){
+  
+  first <- unlist(strsplit(df3$V1[i],""))
+  second <- unlist(strsplit(df3$V2[i],""))
+  third <- unlist(strsplit(df3$V3[i],""))
+  
+  commonChar <- intersect(intersect(first, second), third)
+  
+  df3$score[i] <- match(commonChar, myLetters)
+}
+```
+
+
+```{r}
+df3 %>%
+  summarise(total = sum(score))
+
+```
+
+# Part 2 Complete
+## After Finding the item type that corresponds to thte badges of each of the three elves... the sum of the priorities of those items was 2,798
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
