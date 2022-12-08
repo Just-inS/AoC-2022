@@ -1,0 +1,118 @@
+---
+title: "My Solution"
+author: "Justin Sparto"
+date: "2022-12-08"
+output:
+  pdf_document: default
+  html_document: default
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+
+library(tidyverse)
+```
+
+# Part 1
+## In how many assignment pairs does one range fully contain the other?
+
+```{r}
+df <- read.table('./data/input.txt', sep = ',')
+```
+
+```{r}
+
+for (i in 1:nrow(df)){
+  
+  V1 <- unlist(strsplit(df$V1[i],"-"))
+  startV1 <- V1[1]
+  endV1 <- V1[2]
+  
+  V2 <- unlist(strsplit(df$V2[i],"-"))
+  startV2 <- V2[1]
+  endV2 <- V2[2]
+  
+  df$startV1[i] <- startV1
+  df$endV1[i] <- endV1
+  
+  df$startV2[i] <- startV2
+  df$endV2[i] <- endV2
+  
+}
+
+df$startV1 <- as.numeric(df$startV1)
+df$endV1 <- as.numeric(df$endV1)
+df$startV2 <- as.numeric(df$startV2)
+df$endV2 <- as.numeric(df$endV2)
+
+df2 <- df
+
+```
+
+```{r}
+
+pairs <- 0
+
+for (i in 1:nrow(df)){
+  
+  if ((df$startV1[i] <= df$startV2[i]) && (df$endV1[i] >= df$endV2[i])){
+    pairs <- pairs + 1
+    df$overlaps[i] <- TRUE
+  }
+  else if ((df$startV2[i] <= df$startV1[i]) && (df$endV2[i] >= df$endV1[i])){
+    pairs <- pairs + 1
+    df$overlaps[i] <- TRUE
+  }
+  else{
+    df$overlaps[i] <- FALSE
+  }
+}
+
+print(pairs)
+
+```
+
+# Part 1 Complete
+## There are 562 assignment pairs in which one range fully contains the other.
+
+# Part 2
+## In how many assignment pairs do the ranges overlap at all? (One does not have to completely contain the other)
+
+```{r}
+
+pairs <- 0
+
+for (i in 1:nrow(df2)){
+  
+  if ((df2$startV1[i] < df2$startV2[i]) && (df2$endV1[i] < df2$startV2[i])){
+    df2$overlaps[i] <- FALSE
+  }
+  else if ((df2$startV2[i] < df2$startV1[i]) && (df2$endV2[i] < df2$startV1[i])){
+    df2$overlaps[i] <- FALSE
+  }
+  else{
+    pairs <- pairs + 1
+    df2$overlaps[i] <- TRUE
+  }
+}
+
+print(pairs)
+
+```
+
+# Part 2 Complete
+## There are 924 assignment pairs in which any overlap occurs.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
